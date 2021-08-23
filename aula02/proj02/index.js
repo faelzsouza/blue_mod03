@@ -16,29 +16,63 @@ const games = [
   "BattleField 5",
 ];
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Bem vindo(a) a lista de games do Raffa!");
 });
 
 app.get("/games", (req, res) => {
-  res.send(`<h1>Meus games:</h1><p>${games}</p>`);
+  const listaComTagP = [];
+  games.forEach(game => listaComTagP.push(`<p>${game}</p>`))
+  res.send(`<h1>Meus games:</h1>${listaComTagP}`);
 });
+
+app.post("/games", (req, res) => {
+  const game = req.body.titulo;
+  games.push(game);
+  const len = games.length;
+  res.send(
+    `Jogo: ${game} adicionado a lista com sucesso! A lista agora tem ${len} jogos.`
+  )
+})
 
 app.get("/games/:id", (req, res) => {
   const id = req.params.id - 1;
   if (id > games.length - 1 || id < 0) {
-    res.send("Opção inválida!");
+    res.send("Não existe um jogo com esse ID!");
   } else {
     const game = games[id];
     res.send(`<h2>Você selecionou o game:</h2><p>${game}</p>`);
   }
 });
 
+app.put('/games/:id', (req, res) => {
+  const id = req.params.id - 1;
+  const game = req.body.titulo;
+  if (id > games.length - 1 || id < 0) {
+    res.send("Não existe um jogo com esse ID!");
+  } else {
+    res.send(`Você alterou o jogo ${games[id]} para ${game} com sucesso!`)
+    games[id] = game;
+  }
+})
+
+app.delete('/games/:id', (req, res) => {
+  const id = req.params.id - 1;
+  if (id > games.length - 1 || id < 0) {
+    res.send("Não existe um jogo com esse ID!");
+  } else {
+    res.send(`O game ${games[id]} foi deletado com sucesso!`)
+    games.splice(id, 1);
+  }
+})
+
 function randomMinMax(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-app.get("/gamerandom", (req, res) => {
+app.get("/randomgame", (req, res) => {
   const n = randomMinMax(0, games.length);
   res.send(`<p>Jogo sorteado:</p><strong>${games[n]}</strong>`);
 });
