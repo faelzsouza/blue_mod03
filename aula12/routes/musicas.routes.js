@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Musica = require("../models/musicas");
+const Musica = require("../models/musicas.models");
+const checkPassword = require('../controllers/auth.controller')
+
 
 router.post("/add", async (req, res) => {
     await Musica.create(req.body)
@@ -14,6 +16,8 @@ router.post("/add", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+    const checkAuth = () => checkPassword(req.headers.user, req.headers.password)
+    console.log(checkAuth())
     await Musica.find({})
         .then((musicas) => res.status(200).send(musicas))
         .catch((err) => {
