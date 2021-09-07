@@ -4,6 +4,7 @@ const db = require("../models/database/conn");
 
 const saltRounds = 10;
 db('blue_aula12')
+
 const userCreate = (user, password) => {
     bcrypt.genSalt(saltRounds, function(err, salt) {
         bcrypt.hash(password, salt, async function(err, hash) {
@@ -14,27 +15,18 @@ const userCreate = (user, password) => {
 });
 }
 
-const checkPassword = async (user, password) => {
-    await User.findOne({ user: user })
-    .then((user) => {
-        const checkResult = bcrypt.compare(
+const checkUser = async (user, password) => {
+    return await User.findOne({ user: user })
+    .then( async (user) => {
+        return await bcrypt.compare(
             password,
             user.password,
-            (err, result) => {
-                return result
-            }
-        );
-
-        return checkResult
+        )
+        .then(result => result)
     })
 }
 
-
-(
-   async () => await checkPassword('fael', 'FaelzinhoD@Blue').then((result) => console.log(result))
-)();
-
-module.exports = [
+module.exports = {
     userCreate,
-    checkPassword
-]
+    checkUser
+}

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Musica = require("../models/musicas.models");
-const checkPassword = require('../controllers/auth.controller')
+const auth = require('../controllers/auth.controller')
 
 
 router.post("/add", async (req, res) => {
@@ -15,17 +15,23 @@ router.post("/add", async (req, res) => {
         });
 });
 
-router.get("/", async (req, res) => {
-    const checkAuth = () => checkPassword(req.headers.user, req.headers.password)
-    console.log(checkAuth())
-    await Musica.find({})
-        .then((musicas) => res.status(200).send(musicas))
-        .catch((err) => {
-            console.error(err);
-            res.status(400).send(
-                "Algo deu errado! :/"
-            );
-        });
+
+router.get("/", (req, res) => {
+    auth.checkUser(req.headers['user'], req.headers['password']).then(
+        async result => {
+            if (result === true){
+                await Musica.find({})
+                .then((musicas) => res.status(200).send(musicas))
+                .catch((err) => {
+                    console.error(err);
+                    res.status(400).send(
+                        "Algo deu errado! :/"
+                    );
+                });
+            }
+            res.status(400).send('Faça login antes!')
+        }
+    )
 });
 
 router.get("/findById/:id", async (req, res) => {

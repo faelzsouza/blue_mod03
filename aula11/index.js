@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 
 const Usuario = require('./models/usuario');
 
-mongoose.connect("mongodb+srv://faelz:KwvS-PLVEvz.H6h@cluster0.a6lem.mongodb.net/sample_analytics", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+// mongoose.connect("", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// })
 
 
 // const usuario1 = new Usuario({
